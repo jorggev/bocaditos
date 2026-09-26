@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 const PROMO_DURATION = 7 * 24 * 60 * 60 * 1000;
 
 export function PromoBanner() {
+  const pathname = usePathname();
   const isAuthenticated = useStore((state) => state.isAuthenticated);
   const registeredAt = useStore((state) => state.registeredAt);
   const dismissed = useStore((state) => state.promoBannerDismissed);
@@ -22,7 +24,7 @@ export function PromoBanner() {
 
   const isActive = now > 0 && registeredAt !== null && now - new Date(registeredAt).getTime() < PROMO_DURATION;
 
-  if (!isAuthenticated || !isActive || dismissed) return null;
+  if (pathname.startsWith("/admin") || !isAuthenticated || !isActive || dismissed) return null;
 
   return (
     <div className="flex w-full items-center justify-between gap-4 bg-orange-500 px-4 py-2 text-center text-sm font-medium text-white sm:px-8 lg:px-14">

@@ -4,6 +4,7 @@ import { LogOut, Menu, Settings, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +17,7 @@ const navigationLinks = [
 export function StoreNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const isAuthenticated = useStore((state) => state.isAuthenticated);
   const itemCount = useStore((state) => state.items.length);
   const logout = useStore((state) => state.logout);
@@ -26,6 +28,8 @@ export function StoreNavigation() {
     setMobileMenuOpen(false);
     router.push("/");
   };
+
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <header className="border-b border-[#17221c]/10 bg-[#fffdf9] px-4 py-4 text-[#17221c] sm:px-8 lg:px-12">
