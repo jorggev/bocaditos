@@ -13,29 +13,28 @@ interface RippleProps {
 interface RipplePosition {
   x: number;
   y: number;
-  size: number;
   id: number;
 }
 
 export function RippleEffect({
   children,
-  color = "rgba(255, 255, 255, 0.7)",
-  duration = 0.8,
+  color = "currentColor",
+  duration = 0.6,
   className,
 }: RippleProps) {
   const [ripples, setRipples] = React.useState<RipplePosition[]>([]);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const nextRippleId = React.useRef(0);
 
-  function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
     if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 2;
+    const size = 24;
     const ripple = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-      size,
-      id: Date.now(),
+      x: event.clientX - rect.left - size / 2,
+      y: event.clientY - rect.top - size / 2,
+      id: nextRippleId.current++,
     };
 
     setRipples((current) => [...current, ripple]);
@@ -48,27 +47,26 @@ export function RippleEffect({
     <div
       ref={containerRef}
       className={`relative inline-flex overflow-hidden rounded-lg ${className ?? ""}`}
-      onMouseDown={handleMouseDown}
+      onPointerDown={handlePointerDown}
     >
       {children}
       <AnimatePresence>
         {ripples.map((ripple) => (
           <motion.div
             key={ripple.id}
-            initial={{ width: 0, height: 0, x: ripple.x, y: ripple.y, opacity: 0.5 }}
-            animate={{
-              width: ripple.size,
-              height: ripple.size,
-              x: ripple.x - ripple.size / 2,
-              y: ripple.y - ripple.size / 2,
-              opacity: 0,
-            }}
+            initial={{ scale: 0, opacity: 0.35 }}
+            animate={{ scale: 4, opacity: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration, ease: "easeOut" }}
             style={{
               position: "absolute",
-              borderRadius: "100%",
+              left: ripple.x,
+              top: ripple.y,
+              width: 24,
+              height: 24,
+              borderRadius: "50%",
               backgroundColor: color,
+              transformOrigin: "center",
               pointerEvents: "none",
             }}
           />

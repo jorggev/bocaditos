@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { Check, Minus, Plus, X } from "lucide-react";
 import { useStore } from "@/lib/store";
+import { ButtonLoading } from "@/components/ui/button-loading";
+import { Button } from "@/components/ui/button";
+import { ImageWithSkeleton } from "@/components/ui/image-with-skeleton";
 
 export type FoodProduct = {
   id: string;
@@ -22,7 +25,9 @@ type ProductQuickviewProps = {
 
 export function ProductQuickview({ product, open, onOpenChange }: ProductQuickviewProps) {
   const [quantity, setQuantity] = useState(() => useStore.getState().items.find((item) => item.id === product.id)?.quantity ?? 0);
+  const [isAdding, setIsAdding] = useState(false);
   const setItemQuantity = useStore((state) => state.setItemQuantity);
+  const showFeedback = useStore((state) => state.showFeedback);
 
   useEffect(() => {
     if (!open) return;
@@ -44,13 +49,22 @@ export function ProductQuickview({ product, open, onOpenChange }: ProductQuickvi
     setQuantity(safeQuantity);
   };
 
-  const addToCart = () => {
+  const addToCart = async () => {
     if (quantity <= 0) {
-      onOpenChange(false);
+      showFeedback({ type: "warning", title: "Elegí una cantidad", description: "La cantidad mínima para agregar este producto es 1." });
       return;
     }
-    setItemQuantity(product.id, quantity);
-    onOpenChange(false);
+    setIsAdding(true);
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 200));
+      setItemQuantity(product.id, quantity);
+      showFeedback({ type: "success", title: "Agregado al carrito", description: `${product.title}: ${quantity} unidades.` });
+      onOpenChange(false);
+    } catch {
+      showFeedback({ type: "error", title: "No se pudo agregar el producto", description: "Intentá nuevamente." });
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   return (
@@ -62,10 +76,8 @@ export function ProductQuickview({ product, open, onOpenChange }: ProductQuickvi
         className="relative grid max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-md bg-[#fffdf9] text-[#17221c] shadow-2xl md:grid-cols-2"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button type="button" onClick={() => onOpenChange(false)} className="absolute right-3 top-3 z-10 rounded-md bg-white/90 p-2 text-[#17221c] shadow-sm" aria-label="Cerrar detalles">
-          <X className="size-5" />
-        </button>
-        <img src={product.image} alt={product.title} className="h-72 w-full object-cover md:h-full md:min-h-[34rem]" />
+        <Button type="button" variant="ghost" size="icon" onPress={() => onOpenChange(false)} className="absolute right-3 top-3 z-10 rounded-md bg-white/90 text-[#17221c] shadow-sm" aria-label="Cerrar detalles"><X className="size-5" /></Button>
+        <ImageWithSkeleton src={product.image} alt={product.title} containerClassName="h-72 w-full md:h-full md:min-h-[34rem]" />
         <div className="flex flex-col p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">Información del producto</p>
           <h2 id={`${product.id}-title`} className="mt-2 text-3xl font-bold">{product.title}</h2>
@@ -90,11 +102,11 @@ export function ProductQuickview({ product, open, onOpenChange }: ProductQuickvi
             <label htmlFor={`${product.id}-quantity`} className="text-sm font-semibold">Cantidad</label>
             <div className="mt-2 flex gap-2">
               <div className="flex h-11 items-center rounded-md border border-[#17221c]/20">
-                <button type="button" className="p-3 disabled:opacity-40" onClick={() => updateQuantity(quantity - 1)} disabled={quantity === 0} aria-label="Reducir cantidad"><Minus className="size-4" /></button>
+                <Button type="button" variant="ghost" size="icon-sm" className="p-3" onPress={() => updateQuantity(quantity - 1)} isDisabled={quantity === 0} aria-label="Reducir cantidad"><Minus className="size-4" /></Button>
                 <input id={`${product.id}-quantity`} type="number" min="0" step="1" value={quantity} onChange={(event) => updateQuantity(Number(event.target.value))} className="w-14 border-x border-[#17221c]/20 bg-transparent text-center outline-none" aria-label="Cantidad de productos" />
-                <button type="button" className="p-3" onClick={() => updateQuantity(quantity + 1)} aria-label="Aumentar cantidad"><Plus className="size-4" /></button>
+                <Button type="button" variant="ghost" size="icon-sm" className="p-3" onPress={() => updateQuantity(quantity + 1)} aria-label="Aumentar cantidad"><Plus className="size-4" /></Button>
               </div>
-              <button type="button" onClick={addToCart} className="h-11 flex-1 rounded-md bg-[#17221c] px-4 font-semibold text-white transition-colors hover:bg-[#26382c]">Agregar al carrito</button>
+              {isAdding ? <ButtonLoading label="Agregando..." className="h-11 flex-1 rounded-md bg-[#17221c] text-white" /> : <Button type="button" onPress={addToCart} className="h-11 flex-1 rounded-md bg-[#17221c] px-4 font-semibold text-white transition-colors hover:bg-[#26382c]">Agregar al carrito</Button>}
             </div>
           </div>
         </div>

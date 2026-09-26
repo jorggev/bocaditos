@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from "lucide-react";
 import { MarqueeEffect } from "@/components/marquee-effect";
 import { LinkButton } from "@/components/ui/button";
+import { ImageWithSkeleton } from "@/components/ui/image-with-skeleton";
 
 const snackImages = [
   "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=700&auto=format&fit=crop",
@@ -30,8 +31,8 @@ export default function Home() {
             {[false, true].map((reverse, columnIndex) => (
               <MarqueeEffect key={String(reverse)} gap={12} direction="vertical" reverse={reverse} speed={30} speedOnHover={1}>
                 {snackImages.slice(columnIndex * 3, columnIndex * 3 + 3).map((image) => (
-                  <figure key={image} className="aspect-square w-full overflow-hidden rounded-md bg-orange-100">
-                    <img src={image} alt="Perro disfrutando un snack Wuff" className="h-full w-full object-cover" />
+                  <figure key={image} className="relative aspect-square w-full overflow-hidden rounded-md bg-orange-100">
+                    <ImageWithSkeleton src={image} alt="Perro disfrutando un snack Wuff" containerClassName="absolute inset-0" />
                   </figure>
                 ))}
               </MarqueeEffect>

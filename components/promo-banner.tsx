@@ -4,6 +4,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 const PROMO_DURATION = 7 * 24 * 60 * 60 * 1000;
 
@@ -28,7 +29,7 @@ export function PromoBanner() {
       <p className="flex-1">Tenés 20% OFF en tu primera compra.</p>
       <div className="flex items-center gap-3">
         <Link href="/promociones" className="rounded-md bg-white px-4 py-2 font-semibold text-[#17221c] hover:bg-orange-50">Reclamar oferta</Link>
-        <button type="button" onClick={dismissPromoBanner} className="rounded-md p-2 hover:bg-orange-600" aria-label="Cerrar oferta"><X className="size-4" /></button>
+        <Button type="button" variant="ghost" size="icon-sm" onPress={dismissPromoBanner} className="rounded-md p-2 text-white hover:bg-orange-600" aria-label="Cerrar oferta"><X className="size-4" /></Button>
       </div>
     </div>
   );

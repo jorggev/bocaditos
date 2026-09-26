@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Check, X } from "lucide-react";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 export function WelcomeNotice() {
   const name = useStore((state) => state.welcomeName);
@@ -21,7 +22,7 @@ export function WelcomeNotice() {
       <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600"><Check className="size-5" /></span>
         <p className="flex-1 font-semibold">¡Bienvenido, {name}!</p>
-        <button type="button" onClick={clearWelcome} className="rounded-md p-2 text-[#17221c]/55 hover:bg-[#17221c]/5" aria-label="Cerrar mensaje"><X className="size-4" /></button>
+        <Button type="button" variant="ghost" size="icon-sm" onPress={clearWelcome} className="rounded-md p-2 text-[#17221c]/55 hover:bg-[#17221c]/5" aria-label="Cerrar mensaje"><X className="size-4" /></Button>
       </div>
     </div>
   );

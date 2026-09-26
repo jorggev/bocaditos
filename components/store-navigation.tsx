@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 const navigationLinks = [
   { href: "/productos", label: "Productos" },
@@ -43,14 +44,14 @@ export function StoreNavigation() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <button type="button" onClick={() => setCartOpen(true)} className="relative rounded-md p-2 text-[#17221c]/70 hover:bg-[#17221c]/5" aria-label={`Abrir carrito, ${itemCount} productos diferentes`}>
+          <Button type="button" variant="ghost" size="icon" onPress={() => setCartOpen(true)} className="relative rounded-md p-2 text-[#17221c]/70 hover:bg-[#17221c]/5" aria-label={`Abrir carrito, ${itemCount} productos diferentes`}>
             <ShoppingCart className="size-5" />
             {itemCount > 0 && <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">{itemCount}</span>}
-          </button>
+          </Button>
           {isAuthenticated ? (
             <>
               <Link href="/perfil" className="rounded-md p-2 text-[#17221c]/70 hover:bg-[#17221c]/5" aria-label="Ajustes de perfil"><Settings className="size-5" /></Link>
-              <button type="button" onClick={handleLogout} className="rounded-md px-3 py-2 text-sm font-semibold text-[#17221c]/70 hover:bg-[#17221c]/5">Cerrar sesión</button>
+              <Button type="button" variant="ghost" onPress={handleLogout} className="rounded-md px-3 py-2 text-sm font-semibold text-[#17221c]/70 hover:bg-[#17221c]/5">Cerrar sesión</Button>
             </>
           ) : (
             <>
@@ -61,13 +62,13 @@ export function StoreNavigation() {
         </div>
 
         <div className="flex items-center gap-1 md:hidden">
-          <button type="button" onClick={() => setCartOpen(true)} className="relative rounded-md p-2" aria-label={`Abrir carrito, ${itemCount} productos diferentes`}>
+          <Button type="button" variant="ghost" size="icon" onPress={() => setCartOpen(true)} className="relative rounded-md p-2" aria-label={`Abrir carrito, ${itemCount} productos diferentes`}>
             <ShoppingCart className="size-5" />
             {itemCount > 0 && <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">{itemCount}</span>}
-          </button>
-          <button type="button" className="rounded-md p-2" onClick={() => setMobileMenuOpen((open) => !open)} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}>
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="rounded-md p-2 md:hidden" onPress={() => setMobileMenuOpen((open) => !open)} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}>
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -80,8 +81,8 @@ export function StoreNavigation() {
           {isAuthenticated ? (
             <>
               <Link href="/perfil" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 rounded-md px-3 py-3 text-sm font-semibold hover:bg-[#17221c]/5"><Settings className="size-4" />Ajustes</Link>
-              <button type="button" onClick={() => { setMobileMenuOpen(false); setCartOpen(true); }} className="flex items-center gap-2 rounded-md px-3 py-3 text-left text-sm font-semibold hover:bg-[#17221c]/5"><ShoppingCart className="size-4" />Carrito</button>
-              <button type="button" onClick={handleLogout} className="flex items-center gap-2 rounded-md px-3 py-3 text-left text-sm font-semibold hover:bg-[#17221c]/5"><LogOut className="size-4" />Cerrar sesión</button>
+              <Button type="button" variant="ghost" onPress={() => { setMobileMenuOpen(false); setCartOpen(true); }} className="flex w-full justify-start gap-2 rounded-md px-3 py-3 text-left text-sm font-semibold hover:bg-[#17221c]/5"><ShoppingCart className="size-4" />Carrito</Button>
+              <Button type="button" variant="ghost" onPress={handleLogout} className="flex w-full justify-start gap-2 rounded-md px-3 py-3 text-left text-sm font-semibold hover:bg-[#17221c]/5"><LogOut className="size-4" />Cerrar sesión</Button>
             </>
           ) : <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-3 text-sm font-semibold hover:bg-[#17221c]/5">Iniciar sesión</Link>}
         </nav>

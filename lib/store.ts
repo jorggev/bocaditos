@@ -6,6 +6,14 @@ type CartItem = {
   quantity: number;
 };
 
+export type AppFeedback = {
+  id: number;
+  type: "success" | "error" | "warning" | "info";
+  title: string;
+  description?: string;
+  autoDismiss?: number;
+};
+
 type StoreState = {
   items: CartItem[];
   isAuthenticated: boolean;
@@ -14,6 +22,7 @@ type StoreState = {
   promoBannerDismissed: boolean;
   cartOpen: boolean;
   welcomeName: string | null;
+  feedback: AppFeedback | null;
   addItem: (id: string) => void;
   setItemQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
@@ -24,6 +33,8 @@ type StoreState = {
   dismissPromoBanner: () => void;
   setCartOpen: (open: boolean) => void;
   clearWelcome: () => void;
+  showFeedback: (feedback: Omit<AppFeedback, "id">) => void;
+  clearFeedback: () => void;
 };
 
 export const useStore = create<StoreState>()(persist((set) => ({
@@ -34,6 +45,7 @@ export const useStore = create<StoreState>()(persist((set) => ({
   promoBannerDismissed: false,
   cartOpen: false,
   welcomeName: null,
+  feedback: null,
   addItem: (id) => set((state) => {
     const item = state.items.find((entry) => entry.id === id);
     if (item) {
@@ -42,7 +54,7 @@ export const useStore = create<StoreState>()(persist((set) => ({
     return { items: [...state.items, { id, quantity: 1 }] };
   }),
   setItemQuantity: (id, quantity) => set((state) => {
-    if (quantity <= 0) return state;
+    if (!Number.isFinite(quantity) || quantity <= 0) return state;
     const existingIndex = state.items.findIndex((item) => item.id === id);
     const safeQuantity = Math.max(1, Math.floor(quantity));
     if (existingIndex === -1) {
@@ -72,6 +84,8 @@ export const useStore = create<StoreState>()(persist((set) => ({
   dismissPromoBanner: () => set({ promoBannerDismissed: true }),
   setCartOpen: (cartOpen) => set({ cartOpen }),
   clearWelcome: () => set({ welcomeName: null }),
+  showFeedback: (feedback) => set({ feedback: { ...feedback, id: Date.now() } }),
+  clearFeedback: () => set({ feedback: null }),
 }), {
   name: "wuff-store",
   partialize: (state) => ({

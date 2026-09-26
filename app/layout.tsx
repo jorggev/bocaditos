@@ -7,6 +7,7 @@ import { StoreNavigation } from "@/components/store-navigation";
 import { Footer } from "@/components/footer";
 import { PromoBanner } from "@/components/promo-banner";
 import { WelcomeNotice } from "@/components/welcome-notice";
+import { AppFeedbackHost } from "@/components/ui/app-feedback-host";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <StoreNavigation />
         <PromoBanner />
         <WelcomeNotice />
+        <AppFeedbackHost />
         {children}
         <CartSidebar />
         <Footer />
